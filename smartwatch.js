@@ -196,20 +196,24 @@ const draw = () => {
     let x = centerX + (faceCoord.x - 1/2) * bodyImage.width * scale ;
     let y = centerY + (faceCoord.y - 1/2) * bodyImage.height * scale;
     let faceImage = selectNewFaceIdx();
+    ctx.save();
+    // Turn Nakki into the right direction (sprite is actually the wrong way)
+    ctx.scale(-direction.x, 1);
     ctx.drawImage(
       bodyImage,
-      x,
+      x * -direction.x,
       y - 20 * scale,
       bodyImage.width * scale,
       bodyImage.height * scale
     );
     ctx.drawImage(
       faceImage,
-      x,
+      x * -direction.x,
       y,
       faceImage.width * scale,
       faceImage.height * scale
     );
+    ctx.restore();
   };
   const drawTime = () => {
     ctx.fillStyle = '#fff';
