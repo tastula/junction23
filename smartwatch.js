@@ -20,11 +20,10 @@ let faceX = canvas.width / 2 - 60; // based on image size
 let faceY = 340;
 
 const loadImage = (path) => {
-    const image = new Image();
-    image.src = path;
-    return image;
-}
-
+  const image = new Image();
+  image.src = path;
+  return image;
+};
 const loadImages = (imageDir, imageFiles) => {
   const images = [];
   imageFiles.forEach((imageFile) => {
@@ -40,7 +39,7 @@ const happyFaces = loadImages('res', [
   'happy2.png',
   'happy3.png',
 ]);
-const testIcon = loadImage('res/status_energy.png');
+const icons = { energy: loadImage('res/iconEnergy.png') };
 
 const getRandomInt = (max) => Math.floor(Math.random() * max);
 const getRandom256 = () => Math.floor(Math.random() * 256);
@@ -53,7 +52,7 @@ const handleStatuses = () => {
   // Add status if a stat exceeds cap
   if (!statuses.length && statSadness > statSadnessCap) {
     const newStatus = {
-      img: testIcon,
+      img: icons.energy,
       bounds: new Path2D(),
       name: 'sadness',
       color: getRandomColor(),
