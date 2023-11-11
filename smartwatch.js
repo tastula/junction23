@@ -9,6 +9,13 @@ const timeFont = '96px sans-serif';
 const iconRad = 35;
 const iconRowY = 100;
 
+const statusEffect = {
+  OK: 0,
+  TIRED: 1,
+  SAD: 2,
+  LONELY: 3,
+}
+
 let blinkingTime = false;
 let hasCondition = true;
 let faceIdx = 0;
@@ -56,6 +63,7 @@ const stats = [
     icon: loadImage('res/iconEnergy.png'),
     amount: 11, // one energy is consumed before draw
     maxAmount: 10,
+    effect: statusEffect.TIRED,
     bounds: new Path2D(),
     color: 'rgb(255,255,125)',
   },
@@ -64,6 +72,7 @@ const stats = [
     icon: loadImage('res/iconHappiness.png'),
     amount: 11, // one energy is consumed before draw
     maxAmount: 10,
+    effect: statusEffect.SAD,
     bounds: new Path2D(),
     color: 'rgb(125,255,125)',
   },
@@ -72,6 +81,7 @@ const stats = [
     icon: loadImage('res/iconSocial.png'),
     amount: 11, // one energy is consumed before draw
     maxAmount: 10,
+    effect: statusEffect.LONELY,
     bounds: new Path2D(),
     color: 'rgb(255,125,125)',
   },
@@ -91,12 +101,12 @@ const registerEvents = () => {
   canvas.addEventListener('click', addStatusCallbacks);
 };
 
-const statusFails = () => {
-  let fails = false;
+const currentStatusEffect = () => {
+  let effect = statusEffect.OK;
   stats.forEach((stat) => {
-    fails = !stat.amount;
+    effect = !stat.amount ? stat.effect : effect;
   });
-  return fails;
+  return effect;
 };
 
 const move = () => {
@@ -104,7 +114,7 @@ const move = () => {
   const proposedPosition = position + direction;
 
   // Move only if everything's okay
-  if (statusFails()) {
+  if (currentStatusEffect() != statusEffect.OK) {
     return;
   }
 
@@ -118,7 +128,7 @@ const move = () => {
 };
 
 const selectNewFaceIdx = () => {
-  const faces = statusFails() ? sadFaces : happyFaces;
+  const faces = currentStatusEffect() != statusEffect.OK ? sadFaces : happyFaces;
   const proposedFaceIdx = getRandomInt(faces.length);
   if (proposedFaceIdx === faceIdx) {
     return selectNewFaceIdx();
