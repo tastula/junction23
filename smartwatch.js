@@ -194,8 +194,14 @@ const draw = () => {
       drawIndicators(radStart + 2 * Math.PI, true);
       drawIndicators(radStart + 2 * Math.PI * statPercentage, false);
 
-      let r = iconRad * 0.7;
-      ctx.drawImage(status.icon, x - r, y - r, 2 * r, 2 * r);
+      let iconFactor = 0.7;
+      ctx.drawImage(
+        status.icon,
+        x - (status.icon.width * iconFactor) / 2,
+        y - (status.icon.height * iconFactor) / 2,
+        iconFactor * status.icon.width,
+        iconFactor * status.icon.height
+      );
       x += step * 2;
     });
   };
