@@ -16,7 +16,7 @@ const statusEffect = {
   LONELY: 3,
 };
 
-let blinkingTime = false;
+let blink = false;
 let hasCondition = true;
 let faceIdx = 0;
 let position = 0;
@@ -165,8 +165,8 @@ const draw = () => {
     const hours = ('0' + date.getHours()).slice(-2);
     const minutes = ('0' + date.getMinutes()).slice(-2);
     ctx.font = timeFont;
-    blinkingTime = !blinkingTime;
-    const timeText = `${hours}${blinkingTime ? ' ' : ':'}${minutes}`;
+    blink = !blink;
+    const timeText = `${hours}${blink ? ' ' : ':'}${minutes}`;
     const timeWidth = ctx.measureText(timeText).width;
     ctx.fillText(timeText, canvas.width / 2 - timeWidth / 2, timeY);
   };
@@ -181,11 +181,14 @@ const draw = () => {
 
       // Draw indicator background and real value
       const drawIndicators = (radEnd, inBackground) => {
+        const getBlinkingColor = (color) => {
+          return !statPercentage && blink ? `${color}22` : `${color}66`;
+        };
         const color = selectCircleColor(statPercentage);
         ctx.beginPath();
         ctx.lineWidth = 10;
         ctx.arc(x, y, iconRad, radStart, radEnd);
-        ctx.strokeStyle = inBackground ? `${color}22` : color;
+        ctx.strokeStyle = inBackground ? getBlinkingColor(color) : color;
         ctx.stroke();
       };
       drawIndicators(radStart + 2 * Math.PI, true);
