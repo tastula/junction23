@@ -36,6 +36,7 @@ const loadImages = (imageDir, imageFiles) => {
   return images;
 };
 
+const bodyImage = loadImage('res/body.png');
 const backgrounds = loadImages('res', ['background1.png']);
 const sadFaces = loadImages('res', ['sad1.png', 'sad2.png']);
 const happyFaces = loadImages('res', [
@@ -153,19 +154,9 @@ const draw = () => {
   const drawBackground = () => {
     ctx.drawImage(backgrounds[0], 0, 0);
   };
-  const drawFace = () => {
-    ctx.fillStyle = '#fff';
+  const drawNakki = () => {
     const steppedFaceX = faceX + step * position;
-    ctx.beginPath();
-    const padding = 4;
-    ctx.roundRect(
-      steppedFaceX - padding,
-      faceY - padding,
-      120 + 2 * padding,
-      82 + 2 * padding,
-      [40, 40, 10, 10]
-    );
-    ctx.fill();
+    ctx.drawImage(bodyImage, steppedFaceX, faceY - 20);
     ctx.drawImage(selectNewFaceIdx(), steppedFaceX, faceY);
   };
   const drawTime = () => {
@@ -202,7 +193,7 @@ const draw = () => {
   ctx.clearRect(0, 0, 480, 480);
   drawBackground();
   drawTime();
-  drawFace();
+  drawNakki();
   drawStatusIcon(canvas.width / 2, iconRowY);
 };
 
