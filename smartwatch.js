@@ -14,7 +14,7 @@ const statusEffect = {
   TIRED: 1,
   SAD: 2,
   LONELY: 3,
-}
+};
 
 let blinkingTime = false;
 let hasCondition = true;
@@ -128,7 +128,8 @@ const move = () => {
 };
 
 const selectNewFaceIdx = () => {
-  const faces = currentStatusEffect() != statusEffect.OK ? sadFaces : happyFaces;
+  const faces =
+    currentStatusEffect() != statusEffect.OK ? sadFaces : happyFaces;
   const proposedFaceIdx = getRandomInt(faces.length);
   if (proposedFaceIdx === faceIdx) {
     return selectNewFaceIdx();
@@ -136,6 +137,16 @@ const selectNewFaceIdx = () => {
     faceIdx = proposedFaceIdx;
     return faces[faceIdx];
   }
+};
+
+const selectCircleColor = (percentage) => {
+  if (percentage > 0.66) {
+    return '#238823';
+  }
+  if (percentage > 0.33) {
+    return '#ffbf00';
+  }
+  return '#d2222d';
 };
 
 const draw = () => {
@@ -169,21 +180,22 @@ const draw = () => {
     ctx.fillText(timeText, canvas.width / 2 - timeWidth / 2, timeY);
   };
   const drawStatusIcon = (cx, cy) => {
-    let step = iconRad*1.5;
-    let x = cx - (stats.length - 1)*step;
+    let step = iconRad * 1.5;
+    let x = cx - (stats.length - 1) * step;
     let y = cy;
     stats.forEach((status) => {
+      const statPercentage = status.amount / status.maxAmount;
       status.bounds.arc(x, y, iconRad, 0, 2 * Math.PI);
       ctx.beginPath();
-      const statCircle = (status.amount / status.maxAmount) * 2 * Math.PI;
-      ctx.arc(x, y, iconRad, 0, statCircle);
-      ctx.fillStyle = status.color;
+      const radStart = 1.5 * Math.PI;
+      const radEnd = radStart + statPercentage * 2 * Math.PI;
+      ctx.arc(x, y, iconRad, radStart, radEnd);
       ctx.lineWidth = 10;
-      ctx.fill(status.bounds);
+      ctx.strokeStyle = selectCircleColor(statPercentage);
       ctx.stroke();
       let r = iconRad * 0.7;
       ctx.drawImage(status.icon, x - r, y - r, 2 * r, 2 * r);
-      x += step*2;
+      x += step * 2;
     });
   };
 
