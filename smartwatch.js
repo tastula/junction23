@@ -1,8 +1,11 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
-const moveLimit = 0.3;
-const depthLimit = [1.5, 0.7];
+const moveLimit = {
+  x: [-.5, .5],
+  y: [-.2, .05],
+  z: [0.7, 1.5]
+};
 const faceRad = 30;
 const faceStep = 0.1;
 const timeY = 280;
@@ -22,7 +25,7 @@ let hasCondition = true;
 let faceIdx = 0;
 let position = 0;
 const centerX = canvas.width / 2 - 60; // based on image size
-const centerY = 340;
+const centerY = 240;
 let faceCoord = {
   x: 0.,
   y: 0.,
@@ -144,9 +147,9 @@ const move = () => {
     stepsUntilDirChange -= 1;
   }
 
-  faceCoord.x = clamp(faceCoord.x + direction.x * faceStep, -moveLimit, moveLimit);
-  faceCoord.y = clamp(faceCoord.y + direction.y * faceStep, -moveLimit, moveLimit);
-  faceCoord.z = clamp(faceCoord.z + direction.z * faceStep, depthLimit[1], depthLimit[0]);
+  faceCoord.x = clamp(faceCoord.x + direction.x * faceStep, moveLimit.x[0], moveLimit.x[1]);
+  faceCoord.y = clamp(faceCoord.y + direction.y * faceStep, moveLimit.y[0], moveLimit.y[1]);
+  faceCoord.z = clamp(faceCoord.z + direction.z * faceStep, moveLimit.z[0], moveLimit.z[1]);
 };
 
 const selectNewFaceIdx = () => {
