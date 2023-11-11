@@ -27,10 +27,10 @@ let position = 0;
 const centerX = canvas.width / 2 - 60; // based on image size
 const centerY = 240;
 let faceCoord = {
-  x: 0.,
-  y: 0.,
-  z: 1.
-}
+  x: 0,
+  y: 0,
+  z: 1,
+};
 
 const loadImage = (path) => {
   const image = new Image();
@@ -123,14 +123,15 @@ const clamp = (value, min, max) => {
   if (value < min) return min;
   if (value > max) return max;
   return value;
-}
+};
 
 let stepsUntilDirChange = 0;
 let direction = {
-  x: 0, y: 0, z: 0
+  x: 0,
+  y: 0,
+  z: 0,
 };
 const move = () => {
-
   // Move only if everything's okay
   if (currentStatusEffect() != statusEffect.OK) {
     return;
@@ -141,15 +142,33 @@ const move = () => {
       x: getRandomInt(2) === 1 ? 1 : -1,
       y: getRandomInt(2) === 1 ? 1 : -1,
       z: getRandomInt(2) === 1 ? 1 : -1,
-    }; 
+    };
     stepsUntilDirChange = 5;
   } else {
     stepsUntilDirChange -= 1;
   }
 
+<<<<<<< HEAD
   faceCoord.x = clamp(faceCoord.x + direction.x * faceStep, moveLimit.x[0], moveLimit.x[1]);
   faceCoord.y = clamp(faceCoord.y + direction.y * faceStep, moveLimit.y[0], moveLimit.y[1]);
   faceCoord.z = clamp(faceCoord.z + direction.z * faceStep, moveLimit.z[0], moveLimit.z[1]);
+=======
+  faceCoord.x = clamp(
+    faceCoord.x + direction.x * faceStep,
+    -moveLimit,
+    moveLimit
+  );
+  faceCoord.y = clamp(
+    faceCoord.y + direction.y * faceStep,
+    -moveLimit,
+    moveLimit
+  );
+  faceCoord.z = clamp(
+    faceCoord.z + direction.z * faceStep,
+    depthLimit[1],
+    depthLimit[0]
+  );
+>>>>>>> ad070856bf72f961f3ef3f35bc07545a04c0b62e
 };
 
 const selectNewFaceIdx = () => {
@@ -179,12 +198,24 @@ const draw = () => {
     ctx.drawImage(backgrounds[0], 0, 0);
   };
   const drawNakki = () => {
-    let scale = 1. / faceCoord.z;
-    let x = centerX + faceCoord.x*bodyImage.width*scale;
-    let y = centerY + faceCoord.y*bodyImage.height*scale;
+    let scale = 1 / faceCoord.z;
+    let x = centerX + faceCoord.x * bodyImage.width * scale;
+    let y = centerY + faceCoord.y * bodyImage.height * scale;
     let faceImage = selectNewFaceIdx();
-    ctx.drawImage(bodyImage, x, y - 20*scale, bodyImage.width*scale, bodyImage.height*scale);
-    ctx.drawImage(faceImage, x, y, faceImage.width*scale, faceImage.height*scale);
+    ctx.drawImage(
+      bodyImage,
+      x,
+      y - 20 * scale,
+      bodyImage.width * scale,
+      bodyImage.height * scale
+    );
+    ctx.drawImage(
+      faceImage,
+      x,
+      y,
+      faceImage.width * scale,
+      faceImage.height * scale
+    );
   };
   const drawTime = () => {
     ctx.fillStyle = '#fff';
@@ -208,8 +239,8 @@ const draw = () => {
 
       // Draw indicator background and real value
       const drawIndicators = (radEnd, inBackground) => {
-        const getBlinkingColor = (color) => {
-          return !statPercentage && blink ? `${color}22` : `${color}66`;
+        const getBlinkingColor = (baseColor) => {
+          return !statPercentage && blink ? `${baseColor}22` : `${baseColor}66`;
         };
         const color = selectCircleColor(statPercentage);
         ctx.beginPath();
