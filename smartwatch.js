@@ -19,12 +19,15 @@ let position = 0;
 let faceX = canvas.width / 2 - 60; // based on image size
 let faceY = 340;
 
+const loadImage = (path) => {
+  const image = new Image();
+  image.src = path;
+  return image;
+};
 const loadImages = (imageDir, imageFiles) => {
   const images = [];
   imageFiles.forEach((imageFile) => {
-    const image = new Image();
-    image.src = `${imageDir}/${imageFile}`;
-    images.push(image);
+    images.push(loadImage(`${imageDir}/${imageFile}`));
   });
   return images;
 };
@@ -36,6 +39,7 @@ const happyFaces = loadImages('res', [
   'happy2.png',
   'happy3.png',
 ]);
+const icons = { energy: loadImage('res/iconEnergy.png') };
 
 const getRandomInt = (max) => Math.floor(Math.random() * max);
 const getRandom256 = () => Math.floor(Math.random() * 256);
