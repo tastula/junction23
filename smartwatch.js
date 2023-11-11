@@ -1,9 +1,10 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
-const moveLimit = 4;
+const moveLimit = 0.3;
+const depthLimit = [1.5, 0.7];
 const faceRad = 30;
-const step = 40;
+const faceStep = 0.1;
 const timeY = 280;
 const timeFont = '96px sans-serif';
 const iconRad = 35;
@@ -20,8 +21,13 @@ let blinkingTime = false;
 let hasCondition = true;
 let faceIdx = 0;
 let position = 0;
-let faceX = canvas.width / 2 - 60; // based on image size
-let faceY = 340;
+const centerX = canvas.width / 2 - 60; // based on image size
+const centerY = 340;
+let faceCoord = {
+  x: 0.,
+  y: 0.,
+  z: 1.
+}
 
 const loadImage = (path) => {
   const image = new Image();
@@ -110,22 +116,37 @@ const currentStatusEffect = () => {
   return effect;
 };
 
+const clamp = (value, min, max) => {
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+}
+
+let stepsUntilDirChange = 0;
+let direction = {
+  x: 0, y: 0, z: 0
+};
 const move = () => {
-  const direction = getRandomInt(2) === 1 ? 1 : -1;
-  const proposedPosition = position + direction;
 
   // Move only if everything's okay
   if (currentStatusEffect() != statusEffect.OK) {
     return;
   }
 
-  if (proposedPosition === moveLimit) {
-    position = proposedPosition - 1;
-  } else if (proposedPosition === -moveLimit) {
-    position = proposedPosition + 1;
+  if (stepsUntilDirChange < 1) {
+    direction = {
+      x: getRandomInt(2) === 1 ? 1 : -1,
+      y: getRandomInt(2) === 1 ? 1 : -1,
+      z: getRandomInt(2) === 1 ? 1 : -1,
+    }; 
+    stepsUntilDirChange = 5;
   } else {
-    position = proposedPosition;
+    stepsUntilDirChange -= 1;
   }
+
+  faceCoord.x = clamp(faceCoord.x + direction.x * faceStep, -moveLimit, moveLimit);
+  faceCoord.y = clamp(faceCoord.y + direction.y * faceStep, -moveLimit, moveLimit);
+  faceCoord.z = clamp(faceCoord.z + direction.z * faceStep, depthLimit[1], depthLimit[0]);
 };
 
 const selectNewFaceIdx = () => {
@@ -155,9 +176,12 @@ const draw = () => {
     ctx.drawImage(backgrounds[0], 0, 0);
   };
   const drawNakki = () => {
-    const steppedFaceX = faceX + step * position;
-    ctx.drawImage(bodyImage, steppedFaceX, faceY - 20);
-    ctx.drawImage(selectNewFaceIdx(), steppedFaceX, faceY);
+    let scale = 1. / faceCoord.z;
+    let x = centerX + faceCoord.x*bodyImage.width*scale;
+    let y = centerY + faceCoord.y*bodyImage.height*scale;
+    let faceImage = selectNewFaceIdx();
+    ctx.drawImage(bodyImage, x, y - 20*scale, bodyImage.width*scale, bodyImage.height*scale);
+    ctx.drawImage(faceImage, x, y, faceImage.width*scale, faceImage.height*scale);
   };
   const drawTime = () => {
     ctx.fillStyle = '#fff';
