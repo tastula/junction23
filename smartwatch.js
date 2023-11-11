@@ -145,7 +145,8 @@ const draw = () => {
       status.bounds.arc(x, y, iconRad, 0, 2 * Math.PI);
       ctx.fillStyle = status.color;
       ctx.fill(status.bounds);
-      ctx.drawImage(status.img, x-iconRad, y-iconRad, 2*iconRad, 2*iconRad);
+      let r = iconRad*.7;
+      ctx.drawImage(status.img, x-r, y-r, 2*r, 2*r);
     }
   };
 
