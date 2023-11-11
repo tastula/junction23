@@ -57,7 +57,23 @@ const stats = [
     amount: 11, // one energy is consumed before draw
     maxAmount: 10,
     bounds: new Path2D(),
-    color: getRandomColor(),
+    color: 'rgb(255,255,125)',
+  },
+  {
+    name: 'happiness',
+    icon: loadImage('res/iconHappiness.png'),
+    amount: 11, // one energy is consumed before draw
+    maxAmount: 10,
+    bounds: new Path2D(),
+    color: 'rgb(125,255,125)',
+  },
+  {
+    name: 'social',
+    icon: loadImage('res/iconSocial.png'),
+    amount: 11, // one energy is consumed before draw
+    maxAmount: 10,
+    bounds: new Path2D(),
+    color: 'rgb(255,125,125)',
   },
 ];
 
@@ -142,7 +158,10 @@ const draw = () => {
     const timeWidth = ctx.measureText(timeText).width;
     ctx.fillText(timeText, canvas.width / 2 - timeWidth / 2, timeY);
   };
-  const drawStatusIcon = (x, y) => {
+  const drawStatusIcon = (cx, cy) => {
+    let step = iconRad*1.5;
+    let x = cx - (stats.length - 1)*step;
+    let y = cy;
     stats.forEach((status) => {
       status.bounds.arc(x, y, iconRad, 0, 2 * Math.PI);
       ctx.beginPath();
@@ -154,6 +173,7 @@ const draw = () => {
       ctx.stroke();
       let r = iconRad * 0.7;
       ctx.drawImage(status.icon, x - r, y - r, 2 * r, 2 * r);
+      x += step*2;
     });
   };
 
