@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 
 const moveLimit = {
   x: [-0.5, 0.5],
-  y: [-0.2, 0.05],
+  y: [0.3, 0.8],
   z: [0.7, 1.5],
 };
 const faceRad = 30;
@@ -193,8 +193,8 @@ const draw = () => {
   };
   const drawNakki = () => {
     let scale = 1 / faceCoord.z;
-    let x = centerX + faceCoord.x * bodyImage.width * scale;
-    let y = centerY + faceCoord.y * bodyImage.height * scale;
+    let x = centerX + (faceCoord.x - 1/2) * bodyImage.width * scale ;
+    let y = centerY + (faceCoord.y - 1/2) * bodyImage.height * scale;
     let faceImage = selectNewFaceIdx();
     ctx.drawImage(
       bodyImage,
