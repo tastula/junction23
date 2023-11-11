@@ -19,12 +19,16 @@ let position = 0;
 let faceX = canvas.width / 2 - 60; // based on image size
 let faceY = 340;
 
+const loadImage = (path) => {
+    const image = new Image();
+    image.src = path;
+    return image;
+}
+
 const loadImages = (imageDir, imageFiles) => {
   const images = [];
   imageFiles.forEach((imageFile) => {
-    const image = new Image();
-    image.src = `${imageDir}/${imageFile}`;
-    images.push(image);
+    images.push(loadImage(`${imageDir}/${imageFile}`));
   });
   return images;
 };
@@ -36,6 +40,7 @@ const happyFaces = loadImages('res', [
   'happy2.png',
   'happy3.png',
 ]);
+const testIcon = loadImage('res/status_energy.png');
 
 const getRandomInt = (max) => Math.floor(Math.random() * max);
 const getRandom256 = () => Math.floor(Math.random() * 256);
@@ -48,7 +53,8 @@ const handleStatuses = () => {
   // Add status if a stat exceeds cap
   if (!statuses.length && statSadness > statSadnessCap) {
     const newStatus = {
-      img: new Path2D(),
+      img: testIcon,
+      bounds: new Path2D(),
       name: 'sadness',
       color: getRandomColor(),
       cured: false,
@@ -62,7 +68,7 @@ const handleStatuses = () => {
 const registerEvents = () => {
   const addStatusCallbacks = (event) => {
     statuses.forEach((status) => {
-      if (ctx.isPointInPath(status.img, event.offsetX, event.offsetY)) {
+      if (ctx.isPointInPath(status.bounds, event.offsetX, event.offsetY)) {
         status.cured = true;
         statSadness = 0;
       }
@@ -136,9 +142,11 @@ const draw = () => {
   const drawStatusIcon = (x, y) => {
     if (statuses.length) {
       const status = statuses[0];
-      status.img.arc(x, y, iconRad, 0, 2 * Math.PI);
+      ctx.beginPath();
+      status.bounds.arc(x, y, iconRad, 0, 2 * Math.PI);
       ctx.fillStyle = status.color;
-      ctx.fill(status.img);
+      ctx.fill(status.bounds);
+      ctx.drawImage(status.img, x-iconRad, y-iconRad, 2*iconRad, 2*iconRad);
     }
   };
 
