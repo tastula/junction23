@@ -62,8 +62,8 @@ const stats = [
   {
     name: 'energy',
     icon: loadImage('res/iconEnergy.png'),
-    amount: 11, // one energy is consumed before draw
-    maxAmount: 10,
+    amount: 31, // one energy is consumed before draw
+    maxAmount: 30,
     effect: statusEffect.TIRED,
     bounds: new Path2D(),
     color: 'rgb(255,255,125)',
@@ -71,8 +71,8 @@ const stats = [
   {
     name: 'happiness',
     icon: loadImage('res/iconHappiness.png'),
-    amount: 11, // one energy is consumed before draw
-    maxAmount: 10,
+    amount: 16, // one energy is consumed before draw
+    maxAmount: 15,
     effect: statusEffect.SAD,
     bounds: new Path2D(),
     color: 'rgb(125,255,125)',
@@ -80,8 +80,8 @@ const stats = [
   {
     name: 'social',
     icon: loadImage('res/iconSocial.png'),
-    amount: 11, // one energy is consumed before draw
-    maxAmount: 10,
+    amount: 29, // one energy is consumed before draw
+    maxAmount: 28,
     effect: statusEffect.LONELY,
     bounds: new Path2D(),
     color: 'rgb(255,125,125)',
@@ -145,7 +145,7 @@ const selectCircleColor = (percentage) => {
     return '#238823';
   }
   if (percentage > 0.33) {
-    return '#ffbf00';
+    return '#ffd900';
   }
   return '#d2222d';
 };
@@ -177,13 +177,20 @@ const draw = () => {
     stats.forEach((status) => {
       const statPercentage = status.amount / status.maxAmount;
       status.bounds.arc(x, y, iconRad, 0, 2 * Math.PI);
-      ctx.beginPath();
       const radStart = 1.5 * Math.PI;
-      const radEnd = radStart + statPercentage * 2 * Math.PI;
-      ctx.arc(x, y, iconRad, radStart, radEnd);
-      ctx.lineWidth = 10;
-      ctx.strokeStyle = selectCircleColor(statPercentage);
-      ctx.stroke();
+
+      // Draw indicator background and real value
+      const drawIndicators = (radEnd, inBackground) => {
+        const color = selectCircleColor(statPercentage);
+        ctx.beginPath();
+        ctx.lineWidth = 10;
+        ctx.arc(x, y, iconRad, radStart, radEnd);
+        ctx.strokeStyle = inBackground ? `${color}22` : color;
+        ctx.stroke();
+      };
+      drawIndicators(radStart + 2 * Math.PI, true);
+      drawIndicators(radStart + 2 * Math.PI * statPercentage, false);
+
       let r = iconRad * 0.7;
       ctx.drawImage(status.icon, x - r, y - r, 2 * r, 2 * r);
       x += step * 2;
@@ -204,4 +211,4 @@ const loop = () => {
   requestAnimationFrame(draw);
 };
 
-setInterval(loop, 1000);
+setInterval(loop, 500);
