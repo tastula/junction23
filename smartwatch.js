@@ -193,7 +193,7 @@ const draw = () => {
   };
   const drawNakki = () => {
     let scale = 1 / faceCoord.z;
-    let x = centerX + (faceCoord.x - 1/2) * bodyImage.width * scale ;
+    let x = centerX + (faceCoord.x - 1/2*(-direction.x)) * bodyImage.width * scale ;
     let y = centerY + (faceCoord.y - 1/2) * bodyImage.height * scale;
     let faceImage = selectNewFaceIdx();
     ctx.save();
