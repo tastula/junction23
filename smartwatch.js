@@ -8,10 +8,7 @@ const timeY = 280;
 const timeFont = '96px sans-serif';
 const iconRad = 35;
 const iconRowY = 100;
-const statSadnessCap = 3;
 
-let statSadness = 0;
-let statuses = [];
 let blinkingTime = false;
 let hasCondition = true;
 let faceIdx = 0;
@@ -39,8 +36,6 @@ const happyFaces = loadImages('res', [
   'happy2.png',
   'happy3.png',
 ]);
-const icons = { energy: loadImage('res/iconEnergy.png') };
-
 const getRandomInt = (max) => Math.floor(Math.random() * max);
 const getRandom256 = () => Math.floor(Math.random() * 256);
 const getRandomColor = () =>
@@ -48,28 +43,29 @@ const getRandomColor = () =>
 
 const handleStatuses = () => {
   // Remove cured statuses
-  statuses = statuses.filter((status) => !status.cured);
-  // Add status if a stat exceeds cap
-  if (!statuses.length && statSadness > statSadnessCap) {
-    const newStatus = {
-      img: icons.energy,
-      bounds: new Path2D(),
-      name: 'sadness',
-      color: getRandomColor(),
-      cured: false,
-    };
-    statuses.push(newStatus);
-  }
-  // Increase stats
-  statSadness += 1;
+  stats.forEach((stat) => {
+    if (stat.amount) {
+      stat.amount -= 1;
+    }
+  });
 };
+
+const stats = [
+  {
+    name: 'energy',
+    icon: loadImage('res/iconEnergy.png'),
+    amount: 11, // one energy is consumed before draw
+    maxAmount: 10,
+    bounds: new Path2D(),
+    color: getRandomColor(),
+  },
+];
 
 const registerEvents = () => {
   const addStatusCallbacks = (event) => {
-    statuses.forEach((status) => {
+    stats.forEach((status) => {
       if (ctx.isPointInPath(status.bounds, event.offsetX, event.offsetY)) {
-        status.cured = true;
-        statSadness = 0;
+        status.amount = status.maxAmount + 1;
       }
     });
   };
@@ -79,12 +75,20 @@ const registerEvents = () => {
   canvas.addEventListener('click', addStatusCallbacks);
 };
 
+const statusFails = () => {
+  let fails = false;
+  stats.forEach((stat) => {
+    fails = !stat.amount;
+  });
+  return fails;
+};
+
 const move = () => {
   const direction = getRandomInt(2) === 1 ? 1 : -1;
   const proposedPosition = position + direction;
 
   // Move only if everything's okay
-  if (statuses.length) {
+  if (statusFails()) {
     return;
   }
 
@@ -98,7 +102,7 @@ const move = () => {
 };
 
 const selectNewFaceIdx = () => {
-  const faces = statuses.length ? sadFaces : happyFaces;
+  const faces = statusFails() ? sadFaces : happyFaces;
   const proposedFaceIdx = getRandomInt(faces.length);
   if (proposedFaceIdx === faceIdx) {
     return selectNewFaceIdx();
@@ -139,15 +143,18 @@ const draw = () => {
     ctx.fillText(timeText, canvas.width / 2 - timeWidth / 2, timeY);
   };
   const drawStatusIcon = (x, y) => {
-    if (statuses.length) {
-      const status = statuses[0];
-      ctx.beginPath();
+    stats.forEach((status) => {
       status.bounds.arc(x, y, iconRad, 0, 2 * Math.PI);
+      ctx.beginPath();
+      const statCircle = (status.amount / status.maxAmount) * 2 * Math.PI;
+      ctx.arc(x, y, iconRad, 0, statCircle);
       ctx.fillStyle = status.color;
+      ctx.lineWidth = 10;
       ctx.fill(status.bounds);
-      let r = iconRad*.7;
-      ctx.drawImage(status.img, x-r, y-r, 2*r, 2*r);
-    }
+      ctx.stroke();
+      let r = iconRad * 0.7;
+      ctx.drawImage(status.icon, x - r, y - r, 2 * r, 2 * r);
+    });
   };
 
   ctx.clearRect(0, 0, 480, 480);
