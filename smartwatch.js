@@ -2,9 +2,9 @@ const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
 const moveLimit = {
-  x: [-.5, .5],
-  y: [-.2, .05],
-  z: [0.7, 1.5]
+  x: [-0.5, 0.5],
+  y: [-0.2, 0.05],
+  z: [0.7, 1.5],
 };
 const faceRad = 30;
 const faceStep = 0.1;
@@ -148,27 +148,21 @@ const move = () => {
     stepsUntilDirChange -= 1;
   }
 
-<<<<<<< HEAD
-  faceCoord.x = clamp(faceCoord.x + direction.x * faceStep, moveLimit.x[0], moveLimit.x[1]);
-  faceCoord.y = clamp(faceCoord.y + direction.y * faceStep, moveLimit.y[0], moveLimit.y[1]);
-  faceCoord.z = clamp(faceCoord.z + direction.z * faceStep, moveLimit.z[0], moveLimit.z[1]);
-=======
   faceCoord.x = clamp(
     faceCoord.x + direction.x * faceStep,
-    -moveLimit,
-    moveLimit
+    moveLimit.x[0],
+    moveLimit.x[1]
   );
   faceCoord.y = clamp(
     faceCoord.y + direction.y * faceStep,
-    -moveLimit,
-    moveLimit
+    moveLimit.y[0],
+    moveLimit.y[1]
   );
   faceCoord.z = clamp(
     faceCoord.z + direction.z * faceStep,
-    depthLimit[1],
-    depthLimit[0]
+    moveLimit.z[0],
+    moveLimit.z[1]
   );
->>>>>>> ad070856bf72f961f3ef3f35bc07545a04c0b62e
 };
 
 const selectNewFaceIdx = () => {
